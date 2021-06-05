@@ -1,0 +1,10 @@
+# Ignore files related to API keys
+venv
+/__pycache__
+MANIFEST.in
+/build
+/dist
+/*.egg-info
+.idea
+Results.txt
+Input.txt
