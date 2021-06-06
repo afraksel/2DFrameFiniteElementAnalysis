@@ -10,7 +10,7 @@ area = 0.00391
 center_of_gravity = 1
 inertia_z = 3.892 * (10 ** -5)
 
-# create node objects <Node(x, y, z)>
+# create node objects <Node(x, y)>
 n1 = Node(0, 0)
 n2 = Node(0, 4)
 n3 = Node(0, 7)
@@ -26,11 +26,11 @@ n12 = Node(6, 0)
 
 
 # create section object
-I_section = Section.ArbitrarySection(area=area, inertia_y=2.840 * (10 ** -6), inertia_z=inertia_z,
+I_section = Section.ArbitrarySection(area=0.00391, inertia_y=2.840 * (10 ** -6), inertia_z=3.892 * (10 ** -5),
                                      polar_inertia=0.00003892, warping_rigidity=0.0374)
 
 # create material object
-steel = Material.Steel(yield_strength=275, ultimate_strength=430, elasticity_modulus=200000000, poissons_ratio=0.3)
+steel = Material.Steel(yield_strength=700, ultimate_strength=1000, elasticity_modulus=210000000, poissons_ratio=0.3)
 
 # create frame element objects <FrameElement(start_node: Node, end_node: Node, section: Section, material: Material)>
 e1 = TwoDimensionalFrameElement(n1, n2, I_section, steel, length=4)
@@ -96,6 +96,7 @@ for node in structure.nodes:
                          node.dof_3.force))
 
 # run first_order_elastic analysis
-Solver.analyze_first_order_elastic(structure, forces_array, area, center_of_gravity, inertia_z, "resultsS275.txt")
+Solver.analyze_first_order_elastic(structure, forces_array, area, center_of_gravity, inertia_z, "resultsAHSS.txt")
+
 
 

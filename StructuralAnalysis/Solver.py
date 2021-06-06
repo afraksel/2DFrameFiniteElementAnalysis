@@ -4,7 +4,7 @@ import warnings
 import sys
 
 
-def analyze_first_order_elastic(structure: Structure, forces_array):
+def analyze_first_order_elastic(structure: Structure, forces_array, area, cg, inertia_z, filename):
     global_matrix = global_elastic_matrix(structure)
     ff, fs, sf, ss = partition_global_matrix(structure, global_matrix)
     support_settlements = restrained_displacement_vector(structure)
@@ -13,7 +13,7 @@ def analyze_first_order_elastic(structure: Structure, forces_array):
     __print_input_to_txt(structure)
     displacements = solve_for_displacements(structure, ff, fs, support_settlements, external_force_vector)
     reactions = solve_for_reactions(structure, displacements, support_settlements, sf, ss)
-    __print_results_to_txt(structure, forces_array)
+    __print_results_to_txt(structure, forces_array, area, cg, inertia_z, filename)
     print("*********DISPLACEMENTS***********")
     print(displacements)
     print("***********REACTIONS*************")
@@ -72,8 +72,8 @@ def __print_input_to_txt(structure: Structure):
     txt.close()
 
 
-def __print_results_to_txt(structure: Structure, forces_array):
-    txt = open("Results.txt", "w+")
+def __print_results_to_txt(structure: Structure, forces_array, area, cg, inertia_z, filename):
+    txt = open(filename, "w+")
     txt.truncate(0)
     txt.writelines("########################### OUTPUT ###########################\n\n")
 
@@ -103,4 +103,21 @@ def __print_results_to_txt(structure: Structure, forces_array):
     result = np.array(final_reactions) - np.array(forces_array)
 
     txt.writelines("{}".format(np.array_str(result, max_line_width=np.inf)))
+
+    txt.writelines("\n")
+    txt.writelines("******* Stresses *******\n")
+
+    stress = []
+    for i, j in enumerate(result):
+        if i%3 == 0:
+            stress.append(j/area)
+        elif i%3 == 1:
+            stress.append(j / area)
+        else:
+            stress.append(j*cg/inertia_z)
+
+    txt.writelines("{}".format(stress))
+
+
+
     txt.close()
